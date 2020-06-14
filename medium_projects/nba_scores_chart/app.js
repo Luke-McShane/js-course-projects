@@ -90,18 +90,58 @@ const warriorsGames = [
 const boldScore = (awayPoints, homePoints) =>
 	awayPoints > homePoints ? `<b>${awayPoints}</b>-${homePoints}` : `${awayPoints}-<b>${homePoints}</b>`;
 
-const parentUl = document.createElement('ul');
-for (game of warriorsGames) {
-	const gameLi = document.createElement('li');
-	const { homeTeam, awayTeam } = game;
-	gameLi.innerText = `${awayTeam.team} @ ${homeTeam.team} `;
-	gameLi.innerHTML += boldScore(awayTeam.points, homeTeam.points);
-	const warriors = awayTeam.team === 'Golden State' ? awayTeam : homeTeam;
-	gameLi.classList.add(warriors.isWinner === true ? 'win' : 'loss');
-	parentUl.append(gameLi);
-}
-document.body.prepend(parentUl);
+const scoreLine = ({ awayTeam, homeTeam }) => {
+	let line;
+	line = `${awayTeam.team} @ ${homeTeam.team} `;
+	line += boldScore(awayTeam.points, homeTeam.points);
+	return line;
+};
 
-// function createChart(gameList) {
+const addClass = ({ awayTeam, homeTeam }, myTeam) => {
+	const target = awayTeam.team === myTeam ? awayTeam : homeTeam;
+	return target.isWinner === true ? 'win' : 'loss';
+};
 
+const createChart = (gameList, myTeam) => {
+	const parentUl = document.createElement('ul');
+	parentUl.classList.add('table');
+	for (game of gameList) {
+		const gameLi = document.createElement('li');
+		gameLi.innerHTML = scoreLine(game);
+		gameLi.classList.add(addClass(game, myTeam));
+		parentUl.append(gameLi);
+	}
+	return parentUl;
+};
+
+const container = document.createElement('div');
+container.setAttribute('id', 'container');
+
+const gsw = document.createElement('div');
+const gswHeader = document.createElement('h2');
+gswHeader.innerText = 'Golden State Warriors';
+gsw.prepend(gswHeader);
+gsw.setAttribute('id', 'gsw');
+
+const hr = document.createElement('div');
+const hrHeader = document.createElement('h2');
+hrHeader.innerText = 'Houston Rockets';
+hr.prepend(hrHeader);
+
+hr.setAttribute('id', 'hr');
+
+gsw.append(createChart(warriorsGames, 'Golden State'));
+hr.append(createChart(warriorsGames, 'Houston'));
+
+document.body.prepend(container);
+container.prepend(gsw, hr);
+// const parentUl = document.createElement('ul');
+// for (game of warriorsGames) {
+// 	const gameLi = document.createElement('li');
+// 	const { homeTeam, awayTeam } = game;
+// 	gameLi.innerText = `${awayTeam.team} @ ${homeTeam.team} `;
+// 	gameLi.innerHTML += boldScore(awayTeam.points, homeTeam.points);
+// 	const warriors = awayTeam.team === 'Golden State' ? awayTeam : homeTeam;
+// 	gameLi.classList.add(warriors.isWinner === true ? 'win' : 'loss');
+// 	parentUl.append(gameLi);
 // }
